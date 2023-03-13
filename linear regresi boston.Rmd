@@ -1,0 +1,104 @@
+---
+title: "Untitled"
+author: "Prof Dr Suhartono M.Kom UIN Maulana Malik Ibrahim Malang"
+date: "2/28/2023"
+output: html_document
+---
+
+```{r}
+# Load the MASS package
+library(MASS)
+
+# Load the Boston Housing dataset
+data(Boston)
+```
+
+```{r}
+Boston
+```
+
+
+```{r}
+scatter.smooth(x=Boston$rm, y=Boston$medv, main="rm ~ medv")  # scatterplot
+```
+
+```{r}
+# Create Training and Test data -
+set.seed(100)  # setting seed to reproduce results of random sampling
+trainingRowIndex <- sample(1:nrow(Boston), 0.8*nrow(Boston))  # row indices for training data
+trainingData <- cars[trainingRowIndex, ]  # model training data
+testData  <- cars[-trainingRowIndex, ]   # test data
+
+trainingRowIndex
+```
+
+
+```{r}
+par(mfrow=c(1, 2))  # divide graph area in 2 columns
+boxplot(Boston$rm, main="rm", sub=paste("Outlier rows: ", boxplot.stats(cars$speed)$out))  # box plot for 'speed'
+boxplot(Boston$medv, main="medv", sub=paste("Outlier rows: ", boxplot.stats(cars$dist)$out))  # box plot for 'distance'
+```
+
+```{r}
+library(e1071)
+par(mfrow=c(1, 2))  # divide graph area in 2 columns
+plot(density(Boston$rm), main="Density Plot: rm", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(Boston$rm), 2)))  # density plot for 'rm'
+polygon(density(Boston$rm), col="red")
+plot(density(Boston$medv), main="Density Plot: medv", ylab="Frequency", sub=paste("Skewness:", round(e1071::skewness(Boston$medv), 2)))  # density plot for 'dist'
+polygon(density(Boston$medv), col="red")
+```
+
+```{r}
+cor(Boston$rm, Boston$medv)  # calculate correlation between speed and distance 
+```
+
+```{r}
+# Create a linear regression model to predict median house values based on number of rooms
+fit <- lm(medv ~ rm, data = Boston)
+
+# Print the summary of the regression model
+summary(fit)
+
+```
+
+```{r}
+# Make predictions using the regression model
+predictions <- predict(fit, newdata = data.frame(rm = c(5, 6, 7)))
+
+# Print the predictions
+print(predictions)
+```
+
+```{r}
+AIC(fit)  # AIC => 3352.151
+BIC(fit)  # BIC => 3364.831
+```
+
+```{r}
+modelSummary <- summary(fit)  # capture model summary as an object
+modelCoeffs <- modelSummary$coefficients  # model coefficients
+beta.estimate <- modelCoeffs["rm", "Estimate"]  # get beta estimate for speed
+std.error <- modelCoeffs["rm", "Std. Error"]  # get std.error for speed
+t_value <- beta.estimate/std.error  # calc t statistic
+p_value <- 2*pt(-abs(t_value), df=nrow(Boston)-ncol(Boston))  # calc p Value
+f_statistic <- fit$fstatistic[1]  # fstatistic
+f <- summary(fit)$fstatistic  # parameters for model p-value calc
+model_p <- pf(f[1], f[2], f[3], lower=FALSE)
+```
+
+```{r}
+t_value
+p_value
+f_statistic
+model_p
+```
+
+```{r figurename, echo=FALSE, fig.cap="my caption", out.width = '90%'}
+#knitr::include_graphics("kriteria_model.png", error=FALSE)
+```
+
+
+
+
+
+
