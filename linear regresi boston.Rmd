@@ -1,7 +1,7 @@
 ---
-title: "Untitled"
-author: "Prof Dr Suhartono M.Kom UIN Maulana Malik Ibrahim Malang"
-date: "2/28/2023"
+title: "Linear Regression"
+author: "Galan Ramadan Harya Galib - UIN Maulana Malik Ibrahim Malang"
+date: "13/03/2023"
 output: html_document
 ---
 
